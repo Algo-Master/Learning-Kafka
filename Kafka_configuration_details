@@ -1,0 +1,31 @@
+Zookeeper start command:
+docker run --name zoocontainer -p 2181:2181 zookeeper
+
+Kafka start command from piyush tut:
+docker run -d --name kafcontainer \
+  -p 9092:9092 \
+  -e KAFKA_PROCESS_ROLES='broker' \
+  -e KAFKA_BROKER_ID=1 \
+  -e KAFKA_ZOOKEEPER_CONNECT='10.99.138.3:2181' \
+  -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP='PLAINTEXT:PLAINTEXT' \
+  -e KAFKA_ADVERTISED_LISTENERS='PLAINTEXT://10.99.138.3:9092' \
+  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+  -e KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0 \
+  -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
+  -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 \
+  -e KAFKA_JMX_PORT=9101 \
+  -e KAFKA_JMX_HOSTNAME=localhost \
+  -e KAFKA_CLUSTER_ID='YOUR_GENERATED_CLUSTER_ID' \
+  confluentinc/cp-kafka
+
+Kafka start command which actually spins up the kafka container:
+docker run --name kafcontainer -p 9092:9092 \
+ --link zoocontainer:zookeeper \
+ -e KAFKA_ZOOKEEPER_CONNECT=zoocontainer:2181 \
+ -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
+ -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+ -e KAFKA_BROKER_ID=1 \
+ wurstmeister/kafka:latest
+
+// Generated KAFKA_CLUSTER_ID: (No longer needed)
+// SFXThAZ2RASawtbdRY0qKg
